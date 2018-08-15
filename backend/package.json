@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "0.0.0",
+  "description": "backend",
+  "main": "backend.js",
+  "dependencies": {
+    "browserify-fs": "^1.0.0",
+    "cot-lib": "^5.1.2",
+    "file-system": "^2.2.2",
+    "geo-nearby": "^2.0.1",
+    "geohash-neighbours": "^0.2.1",
+    "georedis": "^3.1.1",
+    "latlon-geohash": "^1.1.0",
+    "mongodb": "^3.1.1",
+    "node-schedule": "^1.3.0",
+    "redis-server": "^1.2.0",
+    "rxjs": "^5.5.8",
+    "url-search-params": "^0.10.0",
+    "z-score": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
