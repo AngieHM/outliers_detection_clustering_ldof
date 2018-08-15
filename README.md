@@ -10,13 +10,34 @@ These instructions will get you a copy of the project up and running on your loc
 
 ## Prerequisites
 
+### General prerequisites
 Node js
-Python 2.7
+Python 2.7 or 3
+MongoDB version v4.0.0
+### Specific python packages
+Import the packages as shown below:
+
+import numpy as np
+import sys
+from comparefiles import *
+import time
+from datetime import datetime
+from sklearn.cluster import DBSCAN
+import pylab as pl
+from itertools import cycle
+import matplotlib.pyplot as plt
+import pandas as pd
+from pymongo import MongoClient
+import matplotlib.pyplot as plt
+import hdbscan
+import time
+from datetime import datetime
+from sklearn.neighbors import LocalOutlierFactor
 
 ## Installing
 
 ### Running the backend.js file for data collection:
-
+You need to enter in the backend directory before you run the command below.
 In the command line run: node backend.js month day
 
 Where month and day represent the month and the day in which you need to collect data from. 
