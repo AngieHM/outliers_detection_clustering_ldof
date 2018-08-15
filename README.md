@@ -18,20 +18,35 @@ MongoDB version v4.0.0
 Import the packages as shown below:
 
 import numpy as np
+
 import sys
+
 from comparefiles import *
+
 import time
+
 from datetime import datetime
+
 from sklearn.cluster import DBSCAN
+
 import pylab as pl
+
 from itertools import cycle
+
 import matplotlib.pyplot as plt
+
 import pandas as pd
+
 from pymongo import MongoClient
+
 import matplotlib.pyplot as plt
+
 import hdbscan
+
 import time
+
 from datetime import datetime
+
 from sklearn.neighbors import LocalOutlierFactor
 
 ## Installing
