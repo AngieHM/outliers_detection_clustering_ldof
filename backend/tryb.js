@@ -3,8 +3,7 @@ var Util = require('cot-lib').Util;
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 var fs = require('fs');
-global.arrayObj = [];
-var finalObj = []
+var arrayObj = [];
 //const neighboursOf = require('geohash-neighbours').neighboursOf;
 var Geohash = require('latlon-geohash');
 const Geo = require('geo-nearby');
@@ -37,25 +36,50 @@ var dataClient = client.withSources("lora.70B3D58FF0032D3A", "lora.70B3D58FF0032
 var layerClient = client.withCityId(cityId);
 var response = dataClient.getData("airquality.no2");
 //console.log(response);
-
-var response_layer= layerClient.getLayer("airquality.no2");
  var dateObj = new Date();
 var month = dateObj.getUTCMonth() + 1; //months from 1-12
 var day = dateObj.getUTCDate();
+
+var response_layer= layerClient.getLayer("airquality.no2");
 const args = process.argv;
 month = parseInt(args[2]);
 day = parseInt(args[3]);
+
+MongoClient.connect(url, function(err, db) {
+ var dbo = db.db("mydb3");
+ var year = dateObj.getUTCFullYear();
+ var fromHour = 22;
+ var toHour = 23;
+ var javascriptObj = {}
+ dbo.listCollections({name: "previous"})
+    .next(function(err, collinfo) {
+        if (collinfo) {
+            dbo.collection("previous").rename("previous1", function(err, newColl) {});
+        }
+    });
+
+
+dbo.listCollections({name: "current"})
+    .next(function(err, collinfo) {
+        if (collinfo) {
+            dbo.collection("current").rename("previous", function(err, newColl) {
+                console.log("renamed");
+            });
+        }
+    });
+
  dataClient.getData("environment.temperature").range(Util.Time.timestamp(2018,month,day,20,0,0),Util.Time.timestamp(2018,month,day,21,0,0)).subscribe(
     function(nextData) { 
 
         nextData.data.values.forEach((num, index) => {
 				var javascriptObj = {"metric": "temperature" , "id": nextData.data.values[index][2] , "timestamp":  nextData.data.values[index][0] , "value": nextData.data.values[index][3]};		
-                arrayObj.push(javascriptObj)
-		          /*if (1532464800000<nextData.data.values[index][0]){
-
-                    console.log(nextData.data.values[index][0])
-                  }*/
-        });  
+				//console.log(nextData.data.values[index][2]);
+				//arrayObj.push(javascriptObj);
+				dbo.collection("current").insertOne(javascriptObj, function(err, res) {
+			    	if (err) throw err;
+				    //console.log("1 document inserted");
+			  });
+		});  
     },
 
     function(error) {
@@ -63,20 +87,24 @@ day = parseInt(args[3]);
     },
     function() {
         //fs.writeFile("dataTemp.json", JSON.stringify(arrayObj)); 
-        no2();
+       
     }
 
     );
-
-    function no2(){
  	dataClient.getData("airquality.no2").range(Util.Time.timestamp(2018,month,day,20,0,0),Util.Time.timestamp(2018,month,day,21,0,0)).subscribe(
     function(nextData) { 
     	
 		
         nextData.data.values.forEach((num, index) => {
 				var javascriptObj = {"metric": "no2" , "id": nextData.data.values[index][2] , "timestamp":  nextData.data.values[index][0] , "value": nextData.data.values[index][3]};		
-	            arrayObj.push(javascriptObj)
-
+				//console.log(nextData.data.values[index][2]);
+				//arrayObj.push(javascriptObj);
+				dbo.collection("current").insertOne(javascriptObj, function(err, res) {
+				    if (err) throw err;
+				    //console.log("1 document inserted");
+				    //db.close();
+			    
+			  });
 		});  
     },
 
@@ -84,14 +112,10 @@ day = parseInt(args[3]);
         // do something when an error occurs
     },
     function() {
-        pm10();
+ 
     }
 
     );	 
- }
-
-
- function pm10(){
     dataClient.getData("airquality.pm10").range(Util.Time.timestamp(2018,month,day,20,0,0),Util.Time.timestamp(2018,month,day,21,0,0)).subscribe(
     function(nextData) { 
     	
@@ -99,8 +123,13 @@ day = parseInt(args[3]);
         nextData.data.values.forEach((num, index) => {
 				var javascriptObj = {"metric": "pm10" , "id": nextData.data.values[index][2] , "timestamp":  nextData.data.values[index][0] , "value": nextData.data.values[index][3]};		
 				//console.log(nextData.data.values[index][2]);
-                arrayObj.push(javascriptObj)
-	
+				//arrayObj.push(javascriptObj);
+				dbo.collection("current").insertOne(javascriptObj, function(err, res) {
+				    if (err) throw err;
+				    //console.log("1 document inserted");
+				    //db.close();
+			    
+			  });
 		});  
     },
 
@@ -108,20 +137,24 @@ day = parseInt(args[3]);
         // do something when an error occurs
     },
     function() {
-        pm1();
+
     }
 
-    );
-}
-   
-function pm1(){
+    );	
     dataClient.getData("airquality.pm1").range(Util.Time.timestamp(2018,month,day,20,0,0),Util.Time.timestamp(2018,month,day,21,0,0)).subscribe(
     function(nextData) { 
     	
 		
         nextData.data.values.forEach((num, index) => {
 				var javascriptObj = {"metric": "pm1" , "id": nextData.data.values[index][2] , "timestamp":  nextData.data.values[index][0] , "value": nextData.data.values[index][3]};		
-	            arrayObj.push(javascriptObj)
+				//console.log(nextData.data.values[index][2]);
+				//arrayObj.push(javascriptObj);
+				dbo.collection("current").insertOne(javascriptObj, function(err, res) {
+				    if (err) throw err;
+				    //console.log("1 document inserted");
+				    //db.close();
+			    
+			  });
 		});  
     },
 
@@ -129,38 +162,6 @@ function pm1(){
         // do something when an error occurs
     },
     function() {
-        mongo(arrayObj);
-    
-    }
-
-    );	
-}
-   
-function mongo(arrayObj)
-{
-MongoClient.connect(url, function(err, db) 
-    {
-
-    var dbo = db.db("mydb4");
-    dbo.listCollections({name: "previous"})
-    .next(function(err, collinfo) {
-        if (collinfo) {
-            dbo.collection("previous").rename("previous1", function(err, newColl) {});
-        }
-    });
-
-    dbo.collection("current").rename("previous", function(err, newColl) {
-        console.log("renamed");
-    });
-
-    arrayObj.forEach(function(value){
-        dbo.collection("current").insertOne(value, function(err, res) 
-        {
-        if (err) throw err;            
-        });
-        });
-
-
     dbo.listCollections({name: "previous1"})
     .next(function(err, collinfo) {
         if (collinfo) 
@@ -168,13 +169,13 @@ MongoClient.connect(url, function(err, db)
             dbo.collection("previous1").drop(function(err, delOK) {
             if (err) throw err;
             if (delOK) console.log("Collection deleted");
+            db.close();
           });
         }
     });
+    db.close();
+    }
 
-
-
-
-    db.close(); 
-    });
-}
+    );	
+   
+});
